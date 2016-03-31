@@ -1,0 +1,28 @@
+{
+  "name": "psx/oauth2",
+  "description": "Oauth2 consumer and provider",
+  "keywords": ["oauth"],
+  "homepage": "http://phpsx.org",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Christoph Kappestein",
+      "email": "christoph.kappestein@gmail.com",
+      "homepage": "http://christoph.kappestein.com/"
+    }
+  ],
+  "require": {
+    "php": ">=5.5",
+    "psx/framework": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "PSX\\Oauth2\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PSX\\Oauth2\\Tests\\": "tests/"
+    }
+  }
+}
