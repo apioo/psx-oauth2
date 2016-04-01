@@ -13,7 +13,19 @@
   ],
   "require": {
     "php": ">=5.5",
-    "psx/framework": "dev-master"
+    "psx/framework": "dev-master",
+
+    "psx/api": "dev-master",
+    "psx/cache": "dev-master",
+    "psx/data": "dev-master",
+    "psx/http": "dev-master",
+    "psx/json": "dev-master",
+    "psx/schema": "dev-master",
+    "psx/sql": "dev-master",
+    "psx/validate": "dev-master",
+    "psx/datetime": "dev-master",
+    "psx/model": "dev-master",
+    "psx/uri": "dev-master"
   },
   "require-dev": {
     "phpunit/phpunit": "^4.8"
