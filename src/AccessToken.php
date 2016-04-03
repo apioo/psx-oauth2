@@ -20,7 +20,7 @@
 
 namespace PSX\Oauth2;
 
-use PSX\Data\Record;
+use PSX\Record\Record;
 
 /**
  * AccessToken

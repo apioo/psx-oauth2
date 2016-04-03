@@ -20,7 +20,6 @@
 
 namespace PSX\Oauth2\Authorization;
 
-use PSX\Framework\Base;
 use PSX\Http\Exception as StatusCode;
 use PSX\Oauth2\AuthorizationAbstract;
 use PSX\Uri\Url;
@@ -54,7 +53,7 @@ class AuthorizationCode extends AuthorizationAbstract
         // authentication
         $header = array(
             'Accept'     => 'application/json',
-            'User-Agent' => __CLASS__ . ' ' . Base::VERSION,
+            'User-Agent' => __CLASS__,
         );
 
         if ($this->type == self::AUTH_BASIC) {

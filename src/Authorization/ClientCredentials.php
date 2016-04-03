@@ -20,7 +20,6 @@
 
 namespace PSX\Oauth2\Authorization;
 
-use PSX\Framework\Base;
 use PSX\Oauth2\AuthorizationAbstract;
 
 /**
@@ -45,7 +44,7 @@ class ClientCredentials extends AuthorizationAbstract
         // authentication
         $header = array(
             'Accept'     => 'application/json',
-            'User-Agent' => __CLASS__ . ' ' . Base::VERSION,
+            'User-Agent' => __CLASS__,
         );
 
         if ($this->type == self::AUTH_BASIC) {
