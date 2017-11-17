@@ -31,56 +31,90 @@ use PSX\Record\Record;
  */
 class AccessToken extends Record
 {
+    /**
+     * @param string $accessToken
+     */
     public function setAccessToken($accessToken)
     {
         $this->setProperty('access_token', $accessToken);
     }
 
+    /**
+     * @return string
+     */
     public function getAccessToken()
     {
         return $this->getProperty('access_token');
     }
 
+    /**
+     * @param string $tokenType
+     */
     public function setTokenType($tokenType)
     {
         $this->setProperty('token_type', $tokenType);
     }
 
+    /**
+     * @return string
+     */
     public function getTokenType()
     {
         return $this->getProperty('token_type');
     }
 
+    /**
+     * @param integer $expiresIn
+     * @deprecated
+     */
     public function setExpires($expiresIn)
     {
         $this->setProperty('expires_in', (int) $expiresIn);
     }
 
+    /**
+     * @param integer $expiresIn
+     */
     public function setExpiresIn($expiresIn)
     {
         $this->setProperty('expires_in', (int) $expiresIn);
     }
 
+    /**
+     * @return integer
+     */
     public function getExpiresIn()
     {
         return $this->getProperty('expires_in');
     }
 
+    /**
+     * @param string $refreshToken
+     */
     public function setRefreshToken($refreshToken)
     {
         $this->setProperty('refresh_token', $refreshToken);
     }
 
+    /**
+     * @return string
+     */
     public function getRefreshToken()
     {
         return $this->getProperty('refresh_token');
     }
 
+    /**
+     * @param string $scope
+     */
     public function setScope($scope)
     {
         $this->setProperty('scope', $scope);
     }
 
+    /**
+     * @return string
+     */
     public function getScope()
     {
         return $this->getProperty('scope');

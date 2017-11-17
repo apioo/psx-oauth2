@@ -65,14 +65,26 @@ abstract class AuthorizationAbstract
      */
     protected $type;
 
+    /**
+     * @var string
+     */
     protected $accessTokenClass;
 
+    /**
+     * @param \PSX\Http\Client $httpClient
+     * @param \PSX\Uri\Url $url
+     */
     public function __construct(Http\Client $httpClient, Url $url)
     {
         $this->httpClient = $httpClient;
         $this->url        = $url;
     }
 
+    /**
+     * @param string $clientId
+     * @param string $clientSecret
+     * @param integer $type
+     */
     public function setClientPassword($clientId, $clientSecret, $type = 0x1)
     {
         $this->clientId     = $clientId;
@@ -81,9 +93,9 @@ abstract class AuthorizationAbstract
     }
 
     /**
-     * Sets the class wich is created when an access token gets returned. Should
-     * be an instance of PSX\Oauth2\AccessToken. This can be used to handle
-     * custom parameters
+     * Sets the class which is created when an access token gets returned.
+     * Should be an instance of PSX\Oauth2\AccessToken. This can be used to
+     * handle custom parameters
      *
      * @param string $accessTokenClass
      */
@@ -142,12 +154,17 @@ abstract class AuthorizationAbstract
         }
     }
 
+    /**
+     * @param array $header
+     * @param mixed $data
+     * @return \PSX\Record\RecordInterface
+     */
     protected function request(array $header, $data)
     {
         $request  = new PostRequest($this->url, $header, $data);
         $response = $this->httpClient->request($request);
 
-        $data = Json\Parser::decode($response->getBody());
+        $data = Json\Parser::decode($response->getBody(), true);
 
         if ($response->getStatusCode() == 200) {
             return Transformer::toRecord($data, $this->getAccessTokenClass());
@@ -156,6 +173,9 @@ abstract class AuthorizationAbstract
         }
     }
 
+    /**
+     * @return \PSX\Oauth2\AccessToken
+     */
     protected function getAccessTokenClass()
     {
         if ($this->accessTokenClass != null) {
