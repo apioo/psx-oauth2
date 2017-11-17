@@ -20,6 +20,7 @@
 
 namespace PSX\Oauth2\Tests;
 
+use PSX\Oauth2\Authorization\Exception;
 use PSX\Oauth2\AuthorizationAbstract;
 
 /**
@@ -32,15 +33,38 @@ use PSX\Oauth2\AuthorizationAbstract;
 class AuthorizationAbstractTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException \PSX\Oauth2\Authorization\Exception\InvalidRequestException
+     * @dataProvider errorProvider
      */
-    public function testNormalErrorException()
+    public function testNormalErrorException($error, $class)
     {
-        AuthorizationAbstract::throwErrorException(array(
-            'error' => 'invalid_request',
-            'error_description' => 'Foobar',
-            'error_uri' => 'http://foo.bar'
-        ));
+        try {
+            AuthorizationAbstract::throwErrorException(array(
+                'error' => $error,
+                'error_description' => 'Foobar',
+                'error_uri' => 'http://foo.bar'
+            ));
+
+            $this->fail('Must throw an exception');
+        } catch (Exception\ErrorExceptionAbstract $e) {
+            $this->assertInstanceOf($class, $e);
+            $this->assertEquals($error, $e->getType());
+        }
+    }
+
+    public function errorProvider()
+    {
+        return [
+            ['access_denied', Exception\AccessDeniedException::class],
+            ['invalid_client', Exception\InvalidClientException::class],
+            ['invalid_grant', Exception\InvalidGrantException::class],
+            ['invalid_request', Exception\InvalidRequestException::class],
+            ['invalid_scope', Exception\InvalidScopeException::class],
+            ['server_error', Exception\ServerErrorException::class],
+            ['temporarily_unavailable', Exception\TemporarilyUnavailableException::class],
+            ['unauthorized_client', Exception\UnauthorizedClientException::class],
+            ['unsupported_grant_type', Exception\UnsupportedGrantTypeException::class],
+            ['unsupported_response_type', Exception\UnsupportedResponseTypeException::class],
+        ];
     }
 
     /**

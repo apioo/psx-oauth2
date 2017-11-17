@@ -20,23 +20,23 @@
 
 namespace PSX\Oauth2\Tests\Authorization;
 
-use PSX\Framework\Test\Environment;
 use PSX\Http;
+use PSX\Http\Exception\TemporaryRedirectException;
 use PSX\Http\Handler\Callback;
 use PSX\Http\RequestInterface;
 use PSX\Http\ResponseParser;
 use PSX\Oauth2\AccessToken;
-use PSX\Oauth2\Authorization\PasswordCredentials;
+use PSX\Oauth2\Authorization\AuthorizationCode;
 use PSX\Uri\Url;
 
 /**
- * PasswordCredentialsTest
+ * RefreshTokenTest
  *
  * @author  Christoph Kappestein <christoph.kappestein@gmail.com>
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    http://phpsx.org
  */
-class PasswordCredentialsTest extends \PHPUnit_Framework_TestCase
+class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 {
     const CLIENT_ID     = 's6BhdRkqt3';
     const CLIENT_SECRET = 'gX1fBat3bV';
@@ -45,9 +45,9 @@ class PasswordCredentialsTest extends \PHPUnit_Framework_TestCase
     {
         $httpClient = new Http\Client(new Callback(function (RequestInterface $request) {
             $this->assertEquals('/api', $request->getUri()->getPath());
-            $this->assertEquals('Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW', (string) $request->getHeader('Authorization'));
-            $this->assertEquals('application/x-www-form-urlencoded', (string) $request->getHeader('Content-Type'));
-            $this->assertEquals('grant_type=password&username=johndoe&password=A3ddj3w', (string) $request->getBody());
+            $this->assertEquals('Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW', $request->getHeader('Authorization'));
+            $this->assertEquals('application/x-www-form-urlencoded', $request->getHeader('Content-Type'));
+            $this->assertEquals('grant_type=refresh_token&refresh_token=SplxlOBeZQQYbYS6WxSbIA&scope=foo+bar', (string) $request->getBody());
 
             $response = <<<TEXT
 HTTP/1.1 200 OK
@@ -59,7 +59,6 @@ Pragma: no-cache
   "access_token":"2YotnFZFEjr1zCsicMWpAA",
   "token_type":"example",
   "expires_in":3600,
-  "refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
   "example_parameter":"example_value"
 }
 TEXT;
@@ -67,15 +66,19 @@ TEXT;
             return ResponseParser::convert($response, ResponseParser::MODE_LOOSE)->toString();
         }));
 
-        $oauth = new PasswordCredentials($httpClient, new Url('http://127.0.0.1/api'));
+        $oauth = new AuthorizationCode($httpClient, new Url('http://127.0.0.1/api'));
         $oauth->setClientPassword(self::CLIENT_ID, self::CLIENT_SECRET);
 
-        $accessToken = $oauth->getAccessToken('johndoe', 'A3ddj3w');
+        $accessToken = new AccessToken();
+        $accessToken->setAccessToken('SplxlOBeZQQYbYS6WxSbIA');
+        $accessToken->setRefreshToken('SplxlOBeZQQYbYS6WxSbIA');
+        $accessToken->setScope('foo bar');
+
+        $accessToken = $oauth->refreshToken($accessToken);
 
         $this->assertInstanceOf(AccessToken::class, $accessToken);
         $this->assertEquals('2YotnFZFEjr1zCsicMWpAA', $accessToken->getAccessToken());
         $this->assertEquals('example', $accessToken->getTokenType());
         $this->assertEquals(3600, $accessToken->getExpiresIn());
-        $this->assertEquals('tGzv3JOkF0XG5Qx2TlKWIA', $accessToken->getRefreshToken());
     }
 }

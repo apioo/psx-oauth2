@@ -20,12 +20,12 @@
 
 namespace PSX\Oauth2\Tests\Authorization;
 
-use PSX\Framework\Test\Environment;
 use PSX\Http;
 use PSX\Http\Exception\TemporaryRedirectException;
 use PSX\Http\Handler\Callback;
 use PSX\Http\RequestInterface;
 use PSX\Http\ResponseParser;
+use PSX\Oauth2\AccessToken;
 use PSX\Oauth2\Authorization\AuthorizationCode;
 use PSX\Uri\Url;
 
@@ -43,16 +43,13 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testRequest()
     {
-        $testCase = $this;
-        $httpClient = new Http\Client(new Callback(function (RequestInterface $request) use ($testCase) {
+        $httpClient = new Http\Client(new Callback(function (RequestInterface $request) {
+            $this->assertEquals('/api', $request->getUri()->getPath());
+            $this->assertEquals('Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW', $request->getHeader('Authorization'));
+            $this->assertEquals('application/x-www-form-urlencoded', $request->getHeader('Content-Type'));
+            $this->assertEquals('grant_type=authorization_code&code=SplxlOBeZQQYbYS6WxSbIA', (string) $request->getBody());
 
-            // api request
-            if ($request->getUri()->getPath() == '/api') {
-                $testCase->assertEquals('Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW', (string) $request->getHeader('Authorization'));
-                $testCase->assertEquals('application/x-www-form-urlencoded', (string) $request->getHeader('Content-Type'));
-                $testCase->assertEquals('grant_type=authorization_code&code=SplxlOBeZQQYbYS6WxSbIA', (string) $request->getBody());
-
-                $response = <<<TEXT
+            $response = <<<TEXT
 HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 Cache-Control: no-store
@@ -65,12 +62,8 @@ Pragma: no-cache
   "example_parameter":"example_value"
 }
 TEXT;
-            } else {
-                throw new \RuntimeException('Invalid path');
-            }
 
             return ResponseParser::convert($response, ResponseParser::MODE_LOOSE)->toString();
-
         }));
 
         $oauth = new AuthorizationCode($httpClient, new Url('http://127.0.0.1/api'));
@@ -78,9 +71,44 @@ TEXT;
 
         $accessToken = $oauth->getAccessToken('SplxlOBeZQQYbYS6WxSbIA');
 
+        $this->assertInstanceOf(AccessToken::class, $accessToken);
         $this->assertEquals('2YotnFZFEjr1zCsicMWpAA', $accessToken->getAccessToken());
         $this->assertEquals('example', $accessToken->getTokenType());
         $this->assertEquals(3600, $accessToken->getExpiresIn());
+    }
+
+    /**
+     * @expectedException \PSX\Oauth2\Authorization\Exception\InvalidRequestException
+     * @expectedExceptionMessage Error message
+     */
+    public function testRequestError()
+    {
+        $httpClient = new Http\Client(new Callback(function (RequestInterface $request) {
+            $this->assertEquals('/api', $request->getUri()->getPath());
+            $this->assertEquals('Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW', $request->getHeader('Authorization'));
+            $this->assertEquals('application/x-www-form-urlencoded', $request->getHeader('Content-Type'));
+            $this->assertEquals('grant_type=authorization_code&code=SplxlOBeZQQYbYS6WxSbIA', (string) $request->getBody());
+
+            $response = <<<TEXT
+HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=UTF-8
+Cache-Control: no-store
+Pragma: no-cache
+
+{
+  "error":"invalid_request",
+  "error_description":"Error message",
+  "error_uri":"http://foo.bar"
+}
+TEXT;
+
+            return ResponseParser::convert($response, ResponseParser::MODE_LOOSE)->toString();
+        }));
+
+        $oauth = new AuthorizationCode($httpClient, new Url('http://127.0.0.1/api'));
+        $oauth->setClientPassword(self::CLIENT_ID, self::CLIENT_SECRET);
+
+        $oauth->getAccessToken('SplxlOBeZQQYbYS6WxSbIA');
     }
 
     public function testRedirect()
