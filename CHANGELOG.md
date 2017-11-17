@@ -1,4 +1,9 @@
 
+### 2.0.1 (2017-11-17)
+
+* Add missing error exception
+* Require PHP 7.0
+
 ### 2.0.0 (2016-12-17)
 
 * Set php 5.6 to min requirement
