@@ -46,7 +46,7 @@ class AuthorizationCode extends AuthorizationAbstract
             'code'       => $code,
         );
 
-        if (isset($redirectUri)) {
+        if (!empty($redirectUri)) {
             $data['redirect_uri'] = $redirectUri;
         }
 

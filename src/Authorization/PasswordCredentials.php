@@ -46,7 +46,7 @@ class PasswordCredentials extends AuthorizationAbstract
             'password'   => $password,
         );
 
-        if (isset($scope)) {
+        if (!empty($scope)) {
             $data['scope'] = $scope;
         }
 
