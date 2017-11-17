@@ -189,7 +189,7 @@ abstract class AuthorizationAbstract
             throw new RuntimeException('Invalid response');
         }
 
-        // unfortunatly facebook doesnt follow the oauth draft 26 and set in the
+        // unfortunately facebook doesnt follow the oauth draft 26 and set in the
         // response error key the correct error string instead the error key
         // contains an object with the type and message. Temporary we will use
         // this hack since the spec is not an rfc. If the rfc is released we
@@ -202,27 +202,44 @@ abstract class AuthorizationAbstract
 
         $error = isset($data['error']) ? strtolower($data['error']) : null;
         $desc  = isset($data['error_description']) ? htmlspecialchars($data['error_description']) : null;
-        $uri   = isset($data['error_uri']) ? $data['error_uri'] : null;
+        $class = self::getErrorClass($error);
 
-        if (in_array($error, array('invalid_request', 'unauthorized_client', 'access_denied', 'unsupported_response_type', 'invalid_scope', 'server_error', 'temporarily_unavailable'))) {
-            $exceptionClass = '\PSX\Oauth2\Authorization\Exception\\' . implode('', array_map('ucfirst', explode('_', $error))) . 'Exception';
-            $message        = '';
-
-            if (!empty($desc)) {
-                $message.= strlen($desc) > 128 ? substr($desc, 0, 125) . '...' : $desc;
-            }
-
-            if (!empty($uri) && filter_var($uri, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) {
-                $message.= ' More informations at ' . $uri;
-            }
-
-            if (!empty($message)) {
-                throw new $exceptionClass($message);
-            } else {
-                throw new $exceptionClass('No message available');
-            }
+        if (!empty($class)) {
+            throw new $class($desc);
         } else {
             throw new RuntimeException('Invalid error type');
+        }
+    }
+
+    /**
+     * @param string $error
+     * @return string|null
+     */
+    private static function getErrorClass($error)
+    {
+        switch ($error) {
+            case 'access_denied':
+                return Authorization\Exception\AccessDeniedException::class;
+            case 'invalid_client':
+                return Authorization\Exception\InvalidClientException::class;
+            case 'invalid_grant':
+                return Authorization\Exception\InvalidGrantException::class;
+            case 'invalid_request':
+                return Authorization\Exception\InvalidRequestException::class;
+            case 'invalid_scope':
+                return Authorization\Exception\InvalidScopeException::class;
+            case 'server_error':
+                return Authorization\Exception\ServerErrorException::class;
+            case 'temporarily_unavailable':
+                return Authorization\Exception\TemporarilyUnavailableException::class;
+            case 'unauthorized_client':
+                return Authorization\Exception\UnauthorizedClientException::class;
+            case 'unsupported_grant_type':
+                return Authorization\Exception\UnsupportedGrantTypeException::class;
+            case 'unsupported_response_type':
+                return Authorization\Exception\UnsupportedResponseTypeException::class;
+            default:
+                return null;
         }
     }
 }
