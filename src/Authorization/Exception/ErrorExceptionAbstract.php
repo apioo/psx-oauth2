@@ -31,5 +31,8 @@ use RuntimeException;
  */
 abstract class ErrorExceptionAbstract extends RuntimeException
 {
+    /**
+     * @return string
+     */
     abstract public function getType();
 }
