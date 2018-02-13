@@ -20,10 +20,9 @@
 
 namespace PSX\Oauth2;
 
-use PSX\Data\Payload;
 use PSX\Data\Record\Transformer;
-use PSX\Http;
-use PSX\Http\PostRequest;
+use PSX\Http\Client\ClientInterface;
+use PSX\Http\Client\PostRequest;
 use PSX\Json;
 use PSX\Uri\Url;
 use RuntimeException;
@@ -41,7 +40,7 @@ abstract class AuthorizationAbstract
     const AUTH_POST  = 0x2;
 
     /**
-     * @var \PSX\Http\Client
+     * @var \PSX\Http\Client\ClientInterface
      */
     protected $httpClient;
 
@@ -71,10 +70,10 @@ abstract class AuthorizationAbstract
     protected $accessTokenClass;
 
     /**
-     * @param \PSX\Http\Client $httpClient
+     * @param \PSX\Http\Client\ClientInterface $httpClient
      * @param \PSX\Uri\Url $url
      */
-    public function __construct(Http\Client $httpClient, Url $url)
+    public function __construct(ClientInterface $httpClient, Url $url)
     {
         $this->httpClient = $httpClient;
         $this->url        = $url;

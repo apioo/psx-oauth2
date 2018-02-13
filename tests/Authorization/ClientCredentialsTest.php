@@ -20,11 +20,11 @@
 
 namespace PSX\Oauth2\Tests\Authorization;
 
-use PSX\Framework\Test\Environment;
-use PSX\Http;
-use PSX\Http\Handler\Callback;
-use PSX\Http\RequestInterface;
-use PSX\Http\ResponseParser;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
+use PSX\Http\Client\Client;
 use PSX\Oauth2\AccessToken;
 use PSX\Oauth2\Authorization\ClientCredentials;
 use PSX\Uri\Url;
@@ -43,30 +43,27 @@ class ClientCredentialsTest extends \PHPUnit_Framework_TestCase
 
     public function testRequest()
     {
-        $httpClient = new Http\Client(new Callback(function (RequestInterface $request) {
-            $this->assertEquals('/api', $request->getUri()->getPath());
-            $this->assertEquals('Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW', (string) $request->getHeader('Authorization'));
-            $this->assertEquals('application/x-www-form-urlencoded', (string) $request->getHeader('Content-Type'));
-            $this->assertEquals('grant_type=client_credentials', (string) $request->getBody());
-
-            $response = <<<TEXT
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Cache-Control: no-store
-Pragma: no-cache
-
+        $body = <<<BODY
 {
   "access_token":"2YotnFZFEjr1zCsicMWpAA",
   "token_type":"example",
   "expires_in":3600,
   "example_parameter":"example_value"
 }
-TEXT;
+BODY;
 
-            return ResponseParser::convert($response, ResponseParser::MODE_LOOSE)->toString();
-        }));
+        $mock = new MockHandler([
+            new Response(200, [], $body),
+        ]);
 
-        $oauth = new ClientCredentials($httpClient, new Url('http://127.0.0.1/api'));
+        $container = [];
+        $history = Middleware::history($container);
+
+        $stack = HandlerStack::create($mock);
+        $stack->push($history);
+
+        $client = new Client(['handler' => $stack]);
+        $oauth  = new ClientCredentials($client, new Url('http://127.0.0.1/api'));
         $oauth->setClientPassword(self::CLIENT_ID, self::CLIENT_SECRET);
 
         $accessToken = $oauth->getAccessToken();
@@ -75,5 +72,14 @@ TEXT;
         $this->assertEquals('2YotnFZFEjr1zCsicMWpAA', $accessToken->getAccessToken());
         $this->assertEquals('example', $accessToken->getTokenType());
         $this->assertEquals(3600, $accessToken->getExpiresIn());
+
+        $this->assertEquals(1, count($container));
+        $transaction = array_shift($container);
+
+        $this->assertEquals('POST', $transaction['request']->getMethod());
+        $this->assertEquals('http://127.0.0.1/api', (string) $transaction['request']->getUri());
+        $this->assertEquals(['Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW'], $transaction['request']->getHeader('Authorization'));
+        $this->assertEquals(['application/x-www-form-urlencoded'], $transaction['request']->getHeader('Content-Type'));
+        $this->assertEquals('grant_type=client_credentials', (string) $transaction['request']->getBody());
     }
 }
