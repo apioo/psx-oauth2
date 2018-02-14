@@ -20,7 +20,6 @@
 
 namespace PSX\Oauth2;
 
-use PSX\Data\Record\Transformer;
 use PSX\Http\Client\ClientInterface;
 use PSX\Http\Client\PostRequest;
 use PSX\Json;
@@ -147,7 +146,7 @@ abstract class AuthorizationAbstract
         $data = Json\Parser::decode($response->getBody());
 
         if ($response->getStatusCode() == 200) {
-            return Transformer::toRecord($data, $this->getAccessTokenClass());
+            return $this->newToken($data);
         } else {
             throw new RuntimeException('Could not refresh access token');
         }
@@ -156,7 +155,7 @@ abstract class AuthorizationAbstract
     /**
      * @param array $header
      * @param mixed $data
-     * @return \PSX\Record\RecordInterface
+     * @return \PSX\Oauth2\AccessToken
      */
     protected function request(array $header, $data)
     {
@@ -166,7 +165,7 @@ abstract class AuthorizationAbstract
         $data = Json\Parser::decode($response->getBody(), true);
 
         if ($response->getStatusCode() == 200) {
-            return Transformer::toRecord($data, $this->getAccessTokenClass());
+            return $this->newToken($data);
         } else {
             self::throwErrorException($data);
         }
@@ -182,6 +181,21 @@ abstract class AuthorizationAbstract
         } else {
             return new AccessToken();
         }
+    }
+
+    /**
+     * @param \stdClass $data
+     * @return \PSX\Oauth2\AccessToken
+     */
+    private function newToken($data)
+    {
+        $record = $this->getAccessTokenClass();
+
+        foreach ($data as $key => $value) {
+            $record->setProperty($key, $value);
+        }
+
+        return $record;
     }
 
     /**

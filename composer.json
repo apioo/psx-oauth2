@@ -13,7 +13,6 @@
   ],
   "require": {
     "php": ">=7.0",
-    "psx/data": "^2.0",
     "psx/http": "^2.0",
     "psx/json": "^1.0",
     "psx/record": "^1.0",
