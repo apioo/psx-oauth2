@@ -1,4 +1,8 @@
 
+### 2.1.0 (2018-02-14)
+
+* Update http dependency
+
 ### 2.0.1 (2017-11-17)
 
 * Add missing error exception
