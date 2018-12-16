@@ -20,6 +20,7 @@
 
 namespace PSX\Oauth2\Tests;
 
+use PHPUnit\Framework\TestCase;
 use PSX\Oauth2\Authorization\Exception;
 use PSX\Oauth2\AuthorizationAbstract;
 
@@ -30,7 +31,7 @@ use PSX\Oauth2\AuthorizationAbstract;
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    http://phpsx.org
  */
-class AuthorizationAbstractTest extends \PHPUnit_Framework_TestCase
+class AuthorizationAbstractTest extends TestCase
 {
     /**
      * @dataProvider errorProvider

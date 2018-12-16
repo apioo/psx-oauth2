@@ -24,6 +24,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\TestCase;
 use PSX\Http\Client\Client;
 use PSX\Oauth2\AccessToken;
 use PSX\Oauth2\Authorization\ClientCredentials;
@@ -36,7 +37,7 @@ use PSX\Uri\Url;
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    http://phpsx.org
  */
-class ClientCredentialsTest extends \PHPUnit_Framework_TestCase
+class ClientCredentialsTest extends TestCase
 {
     const CLIENT_ID     = 's6BhdRkqt3';
     const CLIENT_SECRET = 'gX1fBat3bV';

@@ -20,6 +20,7 @@
 
 namespace PSX\Oauth2\Tests;
 
+use PHPUnit\Framework\TestCase;
 use PSX\Oauth2\AccessToken;
 use PSX\Oauth2\Client;
 
@@ -30,7 +31,7 @@ use PSX\Oauth2\Client;
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    http://phpsx.org
  */
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends TestCase
 {
     public function testClient()
     {

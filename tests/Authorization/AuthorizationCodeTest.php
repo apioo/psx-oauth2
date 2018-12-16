@@ -24,6 +24,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\TestCase;
 use PSX\Http\Client\Client;
 use PSX\Http\Exception\TemporaryRedirectException;
 use PSX\Oauth2\AccessToken;
@@ -37,7 +38,7 @@ use PSX\Uri\Url;
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    http://phpsx.org
  */
-class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
+class AuthorizationCodeTest extends TestCase
 {
     const CLIENT_ID     = 's6BhdRkqt3';
     const CLIENT_SECRET = 'gX1fBat3bV';

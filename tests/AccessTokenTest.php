@@ -20,6 +20,7 @@
 
 namespace PSX\Oauth2\Tests;
 
+use PHPUnit\Framework\TestCase;
 use PSX\Oauth2\AccessToken;
 
 /**
@@ -29,7 +30,7 @@ use PSX\Oauth2\AccessToken;
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    http://phpsx.org
  */
-class AccessTokenTest extends \PHPUnit_Framework_TestCase
+class AccessTokenTest extends TestCase
 {
     public function testToken()
     {
