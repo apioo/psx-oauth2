@@ -164,11 +164,11 @@ abstract class AuthorizationAbstract
 
         $data = Json\Parser::decode($response->getBody(), true);
 
-        if ($response->getStatusCode() == 200) {
-            return $this->newToken($data);
-        } else {
+        if ($response->getStatusCode() != 200) {
             self::throwErrorException($data);
         }
+
+        return $this->newToken($data);
     }
 
     /**
@@ -235,44 +235,30 @@ abstract class AuthorizationAbstract
 
         $error = isset($data['error']) ? strtolower($data['error']) : null;
         $desc  = isset($data['error_description']) ? htmlspecialchars($data['error_description']) : null;
-        $class = self::getErrorClass($error);
 
-        if (!empty($class)) {
-            throw new $class($desc);
-        } else {
-            throw new RuntimeException('Invalid error type');
-        }
-    }
-
-    /**
-     * @param string $error
-     * @return string|null
-     */
-    private static function getErrorClass($error)
-    {
         switch ($error) {
             case 'access_denied':
-                return Authorization\Exception\AccessDeniedException::class;
+                throw new Authorization\Exception\AccessDeniedException($desc);
             case 'invalid_client':
-                return Authorization\Exception\InvalidClientException::class;
+                throw new Authorization\Exception\InvalidClientException($desc);
             case 'invalid_grant':
-                return Authorization\Exception\InvalidGrantException::class;
+                throw new Authorization\Exception\InvalidGrantException($desc);
             case 'invalid_request':
-                return Authorization\Exception\InvalidRequestException::class;
+                throw new Authorization\Exception\InvalidRequestException($desc);
             case 'invalid_scope':
-                return Authorization\Exception\InvalidScopeException::class;
+                throw new Authorization\Exception\InvalidScopeException($desc);
             case 'server_error':
-                return Authorization\Exception\ServerErrorException::class;
+                throw new Authorization\Exception\ServerErrorException($desc);
             case 'temporarily_unavailable':
-                return Authorization\Exception\TemporarilyUnavailableException::class;
+                throw new Authorization\Exception\TemporarilyUnavailableException($desc);
             case 'unauthorized_client':
-                return Authorization\Exception\UnauthorizedClientException::class;
+                throw new Authorization\Exception\UnauthorizedClientException($desc);
             case 'unsupported_grant_type':
-                return Authorization\Exception\UnsupportedGrantTypeException::class;
+                throw new Authorization\Exception\UnsupportedGrantTypeException($desc);
             case 'unsupported_response_type':
-                return Authorization\Exception\UnsupportedResponseTypeException::class;
+                throw new Authorization\Exception\UnsupportedResponseTypeException($desc);
             default:
-                return null;
+                throw new RuntimeException('Invalid error type');
         }
     }
 }
