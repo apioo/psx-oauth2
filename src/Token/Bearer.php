@@ -27,7 +27,7 @@ use PSX\Oauth2\TokenAbstract;
  *
  * @author  Christoph Kappestein <christoph.kappestein@gmail.com>
  * @license http://www.apache.org/licenses/LICENSE-2.0
- * @link    http://phpsx.org
+ * @link    https://phpsx.org
  * @see     http://tools.ietf.org/html/rfc5849
  */
 class Bearer extends TokenAbstract
