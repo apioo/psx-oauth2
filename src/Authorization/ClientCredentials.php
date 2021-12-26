@@ -20,6 +20,7 @@
 
 namespace PSX\Oauth2\Authorization;
 
+use PSX\Oauth2\AccessToken;
 use PSX\Oauth2\AuthorizationAbstract;
 
 /**
@@ -31,32 +32,29 @@ use PSX\Oauth2\AuthorizationAbstract;
  */
 class ClientCredentials extends AuthorizationAbstract
 {
-    /**
-     * @return \PSX\Oauth2\AccessToken
-     */
-    public function getAccessToken()
+    public function getAccessToken(): AccessToken
     {
         // request data
-        $data = array(
+        $data = [
             'grant_type' => 'client_credentials',
-        );
+        ];
 
         // authentication
-        $header = array(
+        $headers = [
             'Accept'     => 'application/json',
             'User-Agent' => __CLASS__,
-        );
+        ];
 
-        if ($this->type == self::AUTH_BASIC) {
-            $header['Authorization'] = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
+        if ($this->type === self::AUTH_BASIC) {
+            $headers['Authorization'] = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
         }
 
-        if ($this->type == self::AUTH_POST) {
+        if ($this->type === self::AUTH_POST) {
             $data['client_id']     = $this->clientId;
             $data['client_secret'] = $this->clientSecret;
         }
 
         // send request
-        return $this->request($header, $data);
+        return $this->request($headers, $data);
     }
 }

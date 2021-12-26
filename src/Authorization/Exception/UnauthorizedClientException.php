@@ -29,7 +29,7 @@ namespace PSX\Oauth2\Authorization\Exception;
  */
 class UnauthorizedClientException extends ErrorExceptionAbstract
 {
-    public function getType()
+    public function getType(): string
     {
         return 'unauthorized_client';
     }

@@ -31,7 +31,7 @@ use PSX\Oauth2\Token\Bearer;
  */
 abstract class TokenAbstract
 {
-    protected $accessToken;
+    protected AccessToken $accessToken;
 
     public function __construct(AccessToken $accessToken)
     {
@@ -40,13 +40,12 @@ abstract class TokenAbstract
 
     abstract public function getHeader();
 
-    public static function factory(AccessToken $accessToken)
+    public static function factory(AccessToken $accessToken): Bearer
     {
         switch ($accessToken->getTokenType()) {
             case 'bearer':
             default:
                 return new Bearer($accessToken);
-                break;
         }
     }
 }

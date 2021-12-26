@@ -31,91 +31,57 @@ use PSX\Record\Record;
  */
 class AccessToken extends Record
 {
-    /**
-     * @param string $accessToken
-     */
-    public function setAccessToken($accessToken)
+    public function setAccessToken(string $accessToken): void
     {
         $this->setProperty('access_token', $accessToken);
     }
 
-    /**
-     * @return string
-     */
-    public function getAccessToken()
+    public function getAccessToken(): ?string
     {
         return $this->getProperty('access_token');
     }
 
-    /**
-     * @param string $tokenType
-     */
-    public function setTokenType($tokenType)
+    public function setTokenType(string $tokenType): void
     {
         $this->setProperty('token_type', $tokenType);
     }
 
-    /**
-     * @return string
-     */
-    public function getTokenType()
+    public function getTokenType(): ?string
     {
         return $this->getProperty('token_type');
     }
 
-    /**
-     * @param integer $expiresIn
-     * @deprecated
-     */
-    public function setExpires($expiresIn)
+    public function setExpires(int $expiresIn): void
+    {
+        $this->setProperty('expires_in', $expiresIn);
+    }
+
+    public function setExpiresIn($expiresIn): void
     {
         $this->setProperty('expires_in', (int) $expiresIn);
     }
 
-    /**
-     * @param integer $expiresIn
-     */
-    public function setExpiresIn($expiresIn)
-    {
-        $this->setProperty('expires_in', (int) $expiresIn);
-    }
-
-    /**
-     * @return integer
-     */
-    public function getExpiresIn()
+    public function getExpiresIn(): ?int
     {
         return $this->getProperty('expires_in');
     }
 
-    /**
-     * @param string $refreshToken
-     */
-    public function setRefreshToken($refreshToken)
+    public function setRefreshToken(string $refreshToken): void
     {
         $this->setProperty('refresh_token', $refreshToken);
     }
 
-    /**
-     * @return string
-     */
-    public function getRefreshToken()
+    public function getRefreshToken(): ?string
     {
         return $this->getProperty('refresh_token');
     }
 
-    /**
-     * @param string $scope
-     */
-    public function setScope($scope)
+    public function setScope(string $scope): void
     {
         $this->setProperty('scope', $scope);
     }
 
-    /**
-     * @return string
-     */
-    public function getScope()
+    public function getScope(): ?string
     {
         return $this->getProperty('scope');
     }

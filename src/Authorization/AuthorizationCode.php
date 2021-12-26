@@ -21,6 +21,7 @@
 namespace PSX\Oauth2\Authorization;
 
 use PSX\Http\Exception as StatusCode;
+use PSX\Oauth2\AccessToken;
 use PSX\Oauth2\AuthorizationAbstract;
 use PSX\Uri\Url;
 
@@ -33,54 +34,43 @@ use PSX\Uri\Url;
  */
 class AuthorizationCode extends AuthorizationAbstract
 {
-    /**
-     * @param string $code
-     * @param string $redirectUri
-     * @return \PSX\Oauth2\AccessToken
-     */
-    public function getAccessToken($code, $redirectUri = null)
+    public function getAccessToken(string $code, ?string $redirectUri = null): AccessToken
     {
         // request data
-        $data = array(
+        $data = [
             'grant_type' => 'authorization_code',
             'code'       => $code,
-        );
+        ];
 
         if (!empty($redirectUri)) {
             $data['redirect_uri'] = $redirectUri;
         }
 
         // authentication
-        $header = array(
+        $headers = [
             'Accept'     => 'application/json',
             'User-Agent' => __CLASS__,
-        );
+        ];
 
-        if ($this->type == self::AUTH_BASIC) {
-            $header['Authorization'] = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
+        if ($this->type === self::AUTH_BASIC) {
+            $headers['Authorization'] = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
         }
 
-        if ($this->type == self::AUTH_POST) {
+        if ($this->type === self::AUTH_POST) {
             $data['client_id']     = $this->clientId;
             $data['client_secret'] = $this->clientSecret;
         }
 
         // send request
-        return $this->request($header, $data);
+        return $this->request($headers, $data);
     }
 
     /**
      * Helper method to start the flow by redirecting the user to the
      * authentication server. The getAccessToken method must be used when the
      * server redirects the user back to the redirect uri
-     *
-     * @param \PSX\Uri\Url $url
-     * @param string $clientId
-     * @param string $redirectUri
-     * @param string $scope
-     * @param string $state
      */
-    public static function redirect(Url $url, $clientId, $redirectUri = null, $scope = null, $state = null)
+    public static function redirect(Url $url, string $clientId, ?string $redirectUri = null, ?string $scope = null, ?string $state = null)
     {
         $parameters = $url->getParameters();
         $parameters['response_type'] = 'code';

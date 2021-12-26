@@ -32,7 +32,7 @@ use PSX\Oauth2\TokenAbstract;
  */
 class Bearer extends TokenAbstract
 {
-    public function getHeader()
+    public function getHeader(): string
     {
         return 'Bearer ' . $this->accessToken->getAccessToken();
     }

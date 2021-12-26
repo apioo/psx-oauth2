@@ -29,7 +29,7 @@ namespace PSX\Oauth2\Authorization\Exception;
  */
 class UnsupportedResponseTypeException extends ErrorExceptionAbstract
 {
-    public function getType()
+    public function getType(): string
     {
         return 'unsupported_response_type';
     }

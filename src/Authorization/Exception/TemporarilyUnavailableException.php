@@ -29,7 +29,7 @@ namespace PSX\Oauth2\Authorization\Exception;
  */
 class TemporarilyUnavailableException extends ErrorExceptionAbstract
 {
-    public function getType()
+    public function getType(): string
     {
         return 'temporarily_unavailable';
     }

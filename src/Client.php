@@ -67,11 +67,8 @@ class Client
      * 	'Authorization: ' . $oauth->getAuthorizationHeader(...),
      * );
      * </code>
-     *
-     * @param \PSX\Oauth2\AccessToken $accessToken
-     * @return string
      */
-    public function getAuthorizationHeader(AccessToken $accessToken)
+    public function getAuthorizationHeader(AccessToken $accessToken): string
     {
         return TokenAbstract::factory($accessToken)->getHeader();
     }

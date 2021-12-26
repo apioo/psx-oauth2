@@ -23,6 +23,7 @@ namespace PSX\Oauth2;
 use PSX\Http\Client\ClientInterface;
 use PSX\Http\Client\PostRequest;
 use PSX\Json;
+use PSX\Oauth2\Authorization\Exception\ErrorExceptionAbstract;
 use PSX\Uri\Url;
 use RuntimeException;
 
@@ -38,52 +39,21 @@ abstract class AuthorizationAbstract
     const AUTH_BASIC = 0x1;
     const AUTH_POST  = 0x2;
 
-    /**
-     * @var \PSX\Http\Client\ClientInterface
-     */
-    protected $httpClient;
+    protected ClientInterface $httpClient;
+    protected Url $url;
 
-    /**
-     * @var \PSX\Uri\Url
-     */
-    protected $url;
+    protected ?string $clientId = null;
+    protected ?string $clientSecret = null;
+    protected ?int $type = null;
+    protected ?string $accessTokenClass = null;
 
-    /**
-     * @var string
-     */
-    protected $clientId;
-
-    /**
-     * @var string
-     */
-    protected $clientSecret;
-
-    /**
-     * @var integer
-     */
-    protected $type;
-
-    /**
-     * @var string
-     */
-    protected $accessTokenClass;
-
-    /**
-     * @param \PSX\Http\Client\ClientInterface $httpClient
-     * @param \PSX\Uri\Url $url
-     */
     public function __construct(ClientInterface $httpClient, Url $url)
     {
         $this->httpClient = $httpClient;
         $this->url        = $url;
     }
 
-    /**
-     * @param string $clientId
-     * @param string $clientSecret
-     * @param integer $type
-     */
-    public function setClientPassword($clientId, $clientSecret, $type = 0x1)
+    public function setClientPassword(string $clientId, string $clientSecret, int $type = 0x1)
     {
         $this->clientId     = $clientId;
         $this->clientSecret = $clientSecret;
@@ -97,7 +67,7 @@ abstract class AuthorizationAbstract
      *
      * @param string $accessTokenClass
      */
-    public function setAccessTokenClass($accessTokenClass)
+    public function setAccessTokenClass(string $accessTokenClass)
     {
         $this->accessTokenClass = $accessTokenClass;
     }
@@ -105,11 +75,8 @@ abstract class AuthorizationAbstract
     /**
      * Tries to refresh an access token if an refresh token is available.
      * Returns the new received access token or throws an excepion
-     *
-     * @param \PSX\Oauth2\AccessToken $accessToken
-     * @return \PSX\Oauth2\AccessToken
      */
-    public function refreshToken(AccessToken $accessToken)
+    public function refreshToken(AccessToken $accessToken): AccessToken
     {
         // request data
         $refreshToken = $accessToken->getRefreshToken();
@@ -143,7 +110,7 @@ abstract class AuthorizationAbstract
         $request  = new PostRequest($this->url, $header, $data);
         $response = $this->httpClient->request($request);
 
-        $data = Json\Parser::decode($response->getBody());
+        $data = Json\Parser::decode($response->getBody(), true);
 
         if ($response->getStatusCode() == 200) {
             return $this->newToken($data);
@@ -152,14 +119,9 @@ abstract class AuthorizationAbstract
         }
     }
 
-    /**
-     * @param array $header
-     * @param mixed $data
-     * @return \PSX\Oauth2\AccessToken
-     */
-    protected function request(array $header, $data)
+    protected function request(array $headers, mixed $data): AccessToken
     {
-        $request  = new PostRequest($this->url, $header, $data);
+        $request  = new PostRequest($this->url, $headers, $data);
         $response = $this->httpClient->request($request);
 
         $data = Json\Parser::decode($response->getBody(), true);
@@ -171,10 +133,7 @@ abstract class AuthorizationAbstract
         return $this->newToken($data);
     }
 
-    /**
-     * @return \PSX\Oauth2\AccessToken
-     */
-    protected function getAccessTokenClass()
+    protected function newAccessToken(): AccessToken
     {
         if ($this->accessTokenClass != null) {
             return new $this->accessTokenClass();
@@ -183,13 +142,9 @@ abstract class AuthorizationAbstract
         }
     }
 
-    /**
-     * @param \stdClass $data
-     * @return \PSX\Oauth2\AccessToken
-     */
-    private function newToken($data)
+    private function newToken(array $data): AccessToken
     {
-        $record = $this->getAccessTokenClass();
+        $record = $this->newAccessToken();
 
         foreach ($data as $key => $value) {
             $record->setProperty($key, $value);
@@ -212,16 +167,10 @@ abstract class AuthorizationAbstract
      * exception including also the error message and url if available
      *
      * @param array $data
-     * @throws \PSX\Oauth2\Authorization\Exception\ErrorExceptionAbstract
+     * @throws ErrorExceptionAbstract
      */
-    public static function throwErrorException($data)
+    public static function throwErrorException(array $data)
     {
-        // we do not type hint as array because we want throw a clean exception
-        // in case data is not an array
-        if (!is_array($data)) {
-            throw new RuntimeException('Invalid response');
-        }
-
         // unfortunately facebook doesnt follow the oauth draft 26 and set in the
         // response error key the correct error string instead the error key
         // contains an object with the type and message. Temporary we will use

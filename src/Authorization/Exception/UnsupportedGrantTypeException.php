@@ -29,7 +29,7 @@ namespace PSX\Oauth2\Authorization\Exception;
  */
 class UnsupportedGrantTypeException extends ErrorExceptionAbstract
 {
-    public function getType()
+    public function getType(): string
     {
         return 'unsupported_grant_type';
     }
