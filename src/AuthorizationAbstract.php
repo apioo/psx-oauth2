@@ -138,11 +138,9 @@ abstract class AuthorizationAbstract
     }
 
     /**
-     * Each class which extends PSX\Oauth2\Authorization should have the method
-     * getAccessToken(). Since the method can have different arguments we can
-     * not declare the method as abstract but it will stay here for reference
+     * This method requests an access token for the provided grant type
      */
-    //abstract public function getAccessToken(): AccessToken;
+    abstract public function getAccessToken(GrantInterface $grant): AccessToken;
 
     /**
      * Parses the $data array for an error response and throws the most fitting

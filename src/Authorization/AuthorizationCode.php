@@ -22,7 +22,9 @@ namespace PSX\Oauth2\Authorization;
 
 use PSX\Http\Exception as StatusCode;
 use PSX\Oauth2\AccessToken;
+use PSX\Oauth2\Grant;
 use PSX\Oauth2\AuthorizationAbstract;
+use PSX\Oauth2\GrantInterface;
 use PSX\Uri\Url;
 
 /**
@@ -34,16 +36,13 @@ use PSX\Uri\Url;
  */
 class AuthorizationCode extends AuthorizationAbstract
 {
-    public function getAccessToken(string $code, ?string $redirectUri = null): AccessToken
+    public function getAccessToken(GrantInterface $grant): AccessToken
     {
-        $data = [
-            'grant_type' => 'authorization_code',
-            'code'       => $code,
-        ];
-
-        if (!empty($redirectUri)) {
-            $data['redirect_uri'] = $redirectUri;
+        if (!$grant instanceof Grant\AuthorizationCode) {
+            throw new \RuntimeException('Provided an invalid grant type');
         }
+
+        $data = $grant->toArray();
 
         $headers = [
             'Accept'     => 'application/json',

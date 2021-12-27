@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
 use PSX\Http\Client\Client;
 use PSX\Oauth2\AccessToken;
 use PSX\Oauth2\Authorization\ClientCredentials;
+use PSX\Oauth2\Grant;
 use PSX\Uri\Url;
 
 /**
@@ -39,8 +40,8 @@ use PSX\Uri\Url;
  */
 class ClientCredentialsTest extends TestCase
 {
-    const CLIENT_ID     = 's6BhdRkqt3';
-    const CLIENT_SECRET = 'gX1fBat3bV';
+    public const CLIENT_ID     = 's6BhdRkqt3';
+    public const CLIENT_SECRET = 'gX1fBat3bV';
 
     public function testRequest()
     {
@@ -67,7 +68,7 @@ BODY;
         $oauth  = new ClientCredentials($client, new Url('http://127.0.0.1/api'));
         $oauth->setClientPassword(self::CLIENT_ID, self::CLIENT_SECRET);
 
-        $accessToken = $oauth->getAccessToken();
+        $accessToken = $oauth->getAccessToken(new Grant\ClientCredentials());
 
         $this->assertInstanceOf(AccessToken::class, $accessToken);
         $this->assertEquals('2YotnFZFEjr1zCsicMWpAA', $accessToken->getAccessToken());

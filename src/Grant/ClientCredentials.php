@@ -18,44 +18,47 @@
  * limitations under the License.
  */
 
-namespace PSX\Oauth2\Authorization;
+namespace PSX\Oauth2\Grant;
 
-use PSX\Oauth2\AccessToken;
-use PSX\Oauth2\AuthorizationAbstract;
-use PSX\Oauth2\Grant;
 use PSX\Oauth2\GrantInterface;
 
 /**
- * PasswordCredentials
+ * ClientCredentials
  *
  * @author  Christoph Kappestein <christoph.kappestein@gmail.com>
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    https://phpsx.org
  */
-class PasswordCredentials extends AuthorizationAbstract
+class ClientCredentials implements GrantInterface
 {
-    public function getAccessToken(GrantInterface $grant): AccessToken
+    private string $grantType = 'client_credentials';
+    private ?string $scope;
+
+    public function __construct(?string $scope = null)
     {
-        if (!$grant instanceof Grant\Password) {
-            throw new \RuntimeException('Provided an invalid grant type');
-        }
+        $this->scope = $scope;
+    }
 
-        $data = $grant->toArray();
+    public function getGrantType(): string
+    {
+        return $this->grantType;
+    }
 
-        $headers = [
-            'Accept'     => 'application/json',
-            'User-Agent' => __CLASS__,
+    public function getScope(): ?string
+    {
+        return $this->scope;
+    }
+
+    public function toArray(): array
+    {
+        $data = [
+            'grant_type' => $this->grantType,
         ];
 
-        if ($this->type === self::AUTH_BASIC) {
-            $headers['Authorization'] = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
+        if (!empty($this->scope)) {
+            $data['scope'] = $this->scope;
         }
 
-        if ($this->type === self::AUTH_POST) {
-            $data['client_id']     = $this->clientId;
-            $data['client_secret'] = $this->clientSecret;
-        }
-
-        return $this->request($headers, $data);
+        return $data;
     }
 }

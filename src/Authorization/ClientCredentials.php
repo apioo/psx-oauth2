@@ -22,6 +22,8 @@ namespace PSX\Oauth2\Authorization;
 
 use PSX\Oauth2\AccessToken;
 use PSX\Oauth2\AuthorizationAbstract;
+use PSX\Oauth2\Grant;
+use PSX\Oauth2\GrantInterface;
 
 /**
  * ClientCredentials
@@ -32,11 +34,13 @@ use PSX\Oauth2\AuthorizationAbstract;
  */
 class ClientCredentials extends AuthorizationAbstract
 {
-    public function getAccessToken(): AccessToken
+    public function getAccessToken(GrantInterface $grant): AccessToken
     {
-        $data = [
-            'grant_type' => 'client_credentials',
-        ];
+        if (!$grant instanceof Grant\ClientCredentials) {
+            throw new \RuntimeException('Provided an invalid grant type');
+        }
+
+        $data = $grant->toArray();
 
         $headers = [
             'Accept'     => 'application/json',
