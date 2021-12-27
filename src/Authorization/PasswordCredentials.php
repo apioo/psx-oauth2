@@ -34,7 +34,6 @@ class PasswordCredentials extends AuthorizationAbstract
 {
     public function getAccessToken(string $username, string $password, ?string $scope = null): AccessToken
     {
-        // request data
         $data = [
             'grant_type' => 'password',
             'username'   => $username,
@@ -45,7 +44,6 @@ class PasswordCredentials extends AuthorizationAbstract
             $data['scope'] = $scope;
         }
 
-        // authentication
         $headers = [
             'Accept'     => 'application/json',
             'User-Agent' => __CLASS__,
@@ -60,7 +58,6 @@ class PasswordCredentials extends AuthorizationAbstract
             $data['client_secret'] = $this->clientSecret;
         }
 
-        // send request
         return $this->request($headers, $data);
     }
 }

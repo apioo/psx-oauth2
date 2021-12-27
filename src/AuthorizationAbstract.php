@@ -36,8 +36,8 @@ use RuntimeException;
  */
 abstract class AuthorizationAbstract
 {
-    const AUTH_BASIC = 0x1;
-    const AUTH_POST  = 0x2;
+    public const AUTH_BASIC = 0x1;
+    public const AUTH_POST  = 0x2;
 
     protected ClientInterface $httpClient;
     protected Url $url;
@@ -53,7 +53,7 @@ abstract class AuthorizationAbstract
         $this->url        = $url;
     }
 
-    public function setClientPassword(string $clientId, string $clientSecret, int $type = 0x1)
+    public function setClientPassword(string $clientId, string $clientSecret, int $type = self::AUTH_BASIC)
     {
         $this->clientId     = $clientId;
         $this->clientSecret = $clientSecret;
@@ -86,39 +86,43 @@ abstract class AuthorizationAbstract
             throw new RuntimeException('No refresh token was set');
         }
 
-        $data = array(
+        $data = [
             'grant_type'    => 'refresh_token',
             'refresh_token' => $refreshToken,
-        );
+        ];
 
         if (!empty($scope)) {
             $data['scope'] = $scope;
         }
 
         // authentication
-        $header = array();
+        $headers = [];
 
-        if ($this->type == self::AUTH_BASIC) {
-            $header['Authorization'] = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
+        if ($this->type === self::AUTH_BASIC) {
+            $headers['Authorization'] = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
         }
 
-        if ($this->type == self::AUTH_POST) {
+        if ($this->type === self::AUTH_POST) {
             $data['client_id']     = $this->clientId;
             $data['client_secret'] = $this->clientSecret;
         }
 
-        $request  = new PostRequest($this->url, $header, $data);
+        $request  = new PostRequest($this->url, $headers, $data);
         $response = $this->httpClient->request($request);
 
         $data = Json\Parser::decode($response->getBody(), true);
 
         if ($response->getStatusCode() == 200) {
-            return $this->newToken($data);
+            return AccessToken::fromArray($data);
         } else {
             throw new RuntimeException('Could not refresh access token');
         }
     }
 
+    /**
+     * @throws \JsonException
+     * @throws ErrorExceptionAbstract
+     */
     protected function request(array $headers, mixed $data): AccessToken
     {
         $request  = new PostRequest($this->url, $headers, $data);
@@ -130,82 +134,47 @@ abstract class AuthorizationAbstract
             self::throwErrorException($data);
         }
 
-        return $this->newToken($data);
-    }
-
-    protected function newAccessToken(): AccessToken
-    {
-        if ($this->accessTokenClass != null) {
-            return new $this->accessTokenClass();
-        } else {
-            return new AccessToken();
-        }
-    }
-
-    private function newToken(array $data): AccessToken
-    {
-        $record = $this->newAccessToken();
-
-        foreach ($data as $key => $value) {
-            $record->setProperty($key, $value);
-        }
-
-        return $record;
+        return AccessToken::fromArray($data);
     }
 
     /**
      * Each class which extends PSX\Oauth2\Authorization should have the method
      * getAccessToken(). Since the method can have different arguments we can
      * not declare the method as abstract but it will stay here for reference
-     *
-     * @return \PSX\Oauth2\AccessToken
      */
-    //abstract public function getAccessToken();
+    //abstract public function getAccessToken(): AccessToken;
 
     /**
      * Parses the $data array for an error response and throws the most fitting
      * exception including also the error message and url if available
      *
-     * @param array $data
      * @throws ErrorExceptionAbstract
      */
     public static function throwErrorException(array $data)
     {
-        // unfortunately facebook doesnt follow the oauth draft 26 and set in the
-        // response error key the correct error string instead the error key
-        // contains an object with the type and message. Temporary we will use
-        // this hack since the spec is not an rfc. If the rfc is released we
-        // will strictly follow the spec and remove this hack hopefully facebook
-        // too
-        if (isset($data['error']) && is_array($data['error']) && isset($data['error']['type']) && isset($data['error']['message'])) {
-            $data['error_description'] = $data['error']['message'];
-            $data['error'] = 'invalid_request';
-        }
+        $error = Error::fromArray($data);
 
-        $error = isset($data['error']) ? strtolower($data['error']) : null;
-        $desc  = isset($data['error_description']) ? htmlspecialchars($data['error_description']) : null;
-
-        switch ($error) {
+        switch ($error->getError()) {
             case 'access_denied':
-                throw new Authorization\Exception\AccessDeniedException($desc);
+                throw new Authorization\Exception\AccessDeniedException($error->getErrorDescription());
             case 'invalid_client':
-                throw new Authorization\Exception\InvalidClientException($desc);
+                throw new Authorization\Exception\InvalidClientException($error->getErrorDescription());
             case 'invalid_grant':
-                throw new Authorization\Exception\InvalidGrantException($desc);
+                throw new Authorization\Exception\InvalidGrantException($error->getErrorDescription());
             case 'invalid_request':
-                throw new Authorization\Exception\InvalidRequestException($desc);
+                throw new Authorization\Exception\InvalidRequestException($error->getErrorDescription());
             case 'invalid_scope':
-                throw new Authorization\Exception\InvalidScopeException($desc);
+                throw new Authorization\Exception\InvalidScopeException($error->getErrorDescription());
             case 'server_error':
-                throw new Authorization\Exception\ServerErrorException($desc);
+                throw new Authorization\Exception\ServerErrorException($error->getErrorDescription());
             case 'temporarily_unavailable':
-                throw new Authorization\Exception\TemporarilyUnavailableException($desc);
+                throw new Authorization\Exception\TemporarilyUnavailableException($error->getErrorDescription());
             case 'unauthorized_client':
-                throw new Authorization\Exception\UnauthorizedClientException($desc);
+                throw new Authorization\Exception\UnauthorizedClientException($error->getErrorDescription());
             case 'unsupported_grant_type':
-                throw new Authorization\Exception\UnsupportedGrantTypeException($desc);
+                throw new Authorization\Exception\UnsupportedGrantTypeException($error->getErrorDescription());
             case 'unsupported_response_type':
-                throw new Authorization\Exception\UnsupportedResponseTypeException($desc);
+                throw new Authorization\Exception\UnsupportedResponseTypeException($error->getErrorDescription());
             default:
                 throw new RuntimeException('Invalid error type');
         }

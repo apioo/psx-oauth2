@@ -36,7 +36,6 @@ class AuthorizationCode extends AuthorizationAbstract
 {
     public function getAccessToken(string $code, ?string $redirectUri = null): AccessToken
     {
-        // request data
         $data = [
             'grant_type' => 'authorization_code',
             'code'       => $code,
@@ -46,7 +45,6 @@ class AuthorizationCode extends AuthorizationAbstract
             $data['redirect_uri'] = $redirectUri;
         }
 
-        // authentication
         $headers = [
             'Accept'     => 'application/json',
             'User-Agent' => __CLASS__,
@@ -61,7 +59,6 @@ class AuthorizationCode extends AuthorizationAbstract
             $data['client_secret'] = $this->clientSecret;
         }
 
-        // send request
         return $this->request($headers, $data);
     }
 
@@ -70,7 +67,7 @@ class AuthorizationCode extends AuthorizationAbstract
      * authentication server. The getAccessToken method must be used when the
      * server redirects the user back to the redirect uri
      */
-    public static function redirect(Url $url, string $clientId, ?string $redirectUri = null, ?string $scope = null, ?string $state = null)
+    public static function redirect(Url $url, string $clientId, ?string $redirectUri = null, ?string $scope = null, ?string $state = null): void
     {
         $parameters = $url->getParameters();
         $parameters['response_type'] = 'code';

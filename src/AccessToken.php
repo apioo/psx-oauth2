@@ -20,8 +20,6 @@
 
 namespace PSX\Oauth2;
 
-use PSX\Record\Record;
-
 /**
  * AccessToken
  *
@@ -29,60 +27,72 @@ use PSX\Record\Record;
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    https://phpsx.org
  */
-class AccessToken extends Record
+class AccessToken
 {
-    public function setAccessToken(string $accessToken): void
+    private string $accessToken;
+    private string $tokenType;
+    private ?int $expiresIn;
+    private ?string $refreshToken;
+    private ?string $scope;
+    private ?string $state;
+
+    public function __construct(string $accessToken, string $tokenType, ?int $expiresIn = null, ?string $refreshToken = null, ?string $scope = null, ?string $state = null)
     {
-        $this->setProperty('access_token', $accessToken);
+        $this->accessToken = $accessToken;
+        $this->tokenType = $tokenType;
+        $this->expiresIn = $expiresIn;
+        $this->refreshToken = $refreshToken;
+        $this->scope = $scope;
+        $this->state = $state;
     }
 
-    public function getAccessToken(): ?string
+    public function getAccessToken(): string
     {
-        return $this->getProperty('access_token');
+        return $this->accessToken;
     }
 
-    public function setTokenType(string $tokenType): void
+    public function getTokenType(): string
     {
-        $this->setProperty('token_type', $tokenType);
-    }
-
-    public function getTokenType(): ?string
-    {
-        return $this->getProperty('token_type');
-    }
-
-    public function setExpires(int $expiresIn): void
-    {
-        $this->setProperty('expires_in', $expiresIn);
-    }
-
-    public function setExpiresIn($expiresIn): void
-    {
-        $this->setProperty('expires_in', (int) $expiresIn);
+        return $this->tokenType;
     }
 
     public function getExpiresIn(): ?int
     {
-        return $this->getProperty('expires_in');
-    }
-
-    public function setRefreshToken(string $refreshToken): void
-    {
-        $this->setProperty('refresh_token', $refreshToken);
+        return $this->expiresIn;
     }
 
     public function getRefreshToken(): ?string
     {
-        return $this->getProperty('refresh_token');
-    }
-
-    public function setScope(string $scope): void
-    {
-        $this->setProperty('scope', $scope);
+        return $this->refreshToken;
     }
 
     public function getScope(): ?string
     {
-        return $this->getProperty('scope');
+        return $this->scope;
+    }
+
+    public function getState(): ?string
+    {
+        return $this->state;
+    }
+
+    public static function fromArray(array $data): self
+    {
+        if (!isset($data['access_token'])) {
+            throw new \InvalidArgumentException('Provided token response does not contain a "access_token" key');
+        }
+
+        if (!isset($data['token_type'])) {
+            throw new \InvalidArgumentException('Provided token response does not contain a "token_type" key');
+        }
+
+        return new self(
+            $data['access_token'],
+            $data['token_type'],
+            $data['expires_in'] ?? null,
+            $data['refresh_token'] ?? null,
+            $data['scope'] ?? null,
+            $data['state'] ?? null,
+        );
     }
 }

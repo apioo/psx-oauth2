@@ -34,12 +34,10 @@ class ClientCredentials extends AuthorizationAbstract
 {
     public function getAccessToken(): AccessToken
     {
-        // request data
         $data = [
             'grant_type' => 'client_credentials',
         ];
 
-        // authentication
         $headers = [
             'Accept'     => 'application/json',
             'User-Agent' => __CLASS__,
@@ -54,7 +52,6 @@ class ClientCredentials extends AuthorizationAbstract
             $data['client_secret'] = $this->clientSecret;
         }
 
-        // send request
         return $this->request($headers, $data);
     }
 }
