@@ -36,7 +36,7 @@ class AuthorizationCode implements GrantInterface
     private ?string $redirectUri;
     private ?string $clientId;
 
-    public function __construct(string $code, ?string $redirectUri, ?string $clientId)
+    public function __construct(string $code, ?string $redirectUri = null, ?string $clientId = null)
     {
         $this->code = $code;
         $this->redirectUri = $redirectUri;
