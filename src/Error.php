@@ -20,6 +20,8 @@
 
 namespace PSX\Oauth2;
 
+use PSX\Schema\Attribute\Key;
+
 /**
  * Error
  *
@@ -30,7 +32,9 @@ namespace PSX\Oauth2;
 class Error
 {
     private string $error;
+    #[Key('error_description')]
     private ?string $errorDescription;
+    #[Key('error_uri')]
     private ?string $errorUri;
 
     public function __construct(string $error, ?string $errorDescription = null, ?string $errorUri = null)

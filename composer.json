@@ -1,7 +1,7 @@
 {
   "name": "psx/oauth2",
   "description": "Oauth2 consumer",
-  "keywords": ["oauth"],
+  "keywords": ["oauth2"],
   "homepage": "https://phpsx.org",
   "license": "Apache-2.0",
   "authors": [
@@ -13,10 +13,7 @@
   ],
   "require": {
     "php": ">=8.0",
-    "psx/http": "^3.0",
-    "psx/json": "^2.0",
-    "psx/record": "^2.0",
-    "psx/uri": "^2.0"
+    "psx/schema": "^4.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^8.0",

@@ -20,6 +20,8 @@
 
 namespace PSX\Oauth2;
 
+use PSX\Schema\Attribute\Key;
+
 /**
  * AccessToken
  *
@@ -29,9 +31,13 @@ namespace PSX\Oauth2;
  */
 class AccessToken
 {
+    #[Key('access_token')]
     private string $accessToken;
+    #[Key('token_type')]
     private string $tokenType;
+    #[Key('expires_in')]
     private ?int $expiresIn;
+    #[Key('refresh_token')]
     private ?string $refreshToken;
     private ?string $scope;
     private ?string $state;
