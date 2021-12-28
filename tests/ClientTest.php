@@ -35,11 +35,12 @@ class ClientTest extends TestCase
 {
     public function testClient()
     {
-        $accessToken = new AccessToken();
-        $accessToken->setAccessToken('2YotnFZFEjr1zCsicMWpAA');
-        $accessToken->setTokenType('example');
-        $accessToken->setExpiresIn(3600);
-        $accessToken->setScope('foo bar');
+        $accessToken = new AccessToken(
+            '2YotnFZFEjr1zCsicMWpAA',
+            'example',
+            3600,
+            'foo bar'
+        );
 
         $client = new Client();
         $header = $client->getAuthorizationHeader($accessToken);

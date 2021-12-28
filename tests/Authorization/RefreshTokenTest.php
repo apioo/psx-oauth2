@@ -68,7 +68,7 @@ BODY;
         $oauth  = new AuthorizationCode($client, new Url('http://127.0.0.1/api'));
         $oauth->setClientPassword(self::CLIENT_ID, self::CLIENT_SECRET);
 
-        $accessToken = new AccessToken('SplxlOBeZQQYbYS6WxSbIA', 'Bearer', null, null, 'foo,bar');
+        $accessToken = new AccessToken('SplxlOBeZQQYbYS6WxSbIA', 'Bearer', null, 'SplxlOBeZQQYbYS6WxSbIA', 'foo,bar');
 
         $accessToken = $oauth->refreshToken($accessToken);
 
@@ -84,6 +84,6 @@ BODY;
         $this->assertEquals('http://127.0.0.1/api', (string) $transaction['request']->getUri());
         $this->assertEquals(['Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW'], $transaction['request']->getHeader('Authorization'));
         $this->assertEquals(['application/x-www-form-urlencoded'], $transaction['request']->getHeader('Content-Type'));
-        $this->assertEquals('grant_type=refresh_token&refresh_token=SplxlOBeZQQYbYS6WxSbIA&scope=foo+bar', (string) $transaction['request']->getBody());
+        $this->assertEquals('grant_type=refresh_token&refresh_token=SplxlOBeZQQYbYS6WxSbIA&scope=foo%2Cbar', (string) $transaction['request']->getBody());
     }
 }

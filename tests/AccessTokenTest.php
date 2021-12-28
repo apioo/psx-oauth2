@@ -34,13 +34,13 @@ class AccessTokenTest extends TestCase
 {
     public function testToken()
     {
-        $accessToken = new AccessToken();
-        $accessToken->setAccessToken('2YotnFZFEjr1zCsicMWpAA');
-        $accessToken->setTokenType('example');
-        $accessToken->setExpires(3600);
-        $accessToken->setExpiresIn(3600);
-        $accessToken->setRefreshToken('2YotnFZFEjr1zCsicMWpAA');
-        $accessToken->setScope('foo bar');
+        $accessToken = new AccessToken(
+            '2YotnFZFEjr1zCsicMWpAA',
+            'example',
+            3600,
+            '2YotnFZFEjr1zCsicMWpAA',
+            'foo bar'
+        );
 
         $this->assertEquals('2YotnFZFEjr1zCsicMWpAA', $accessToken->getAccessToken());
         $this->assertEquals('example', $accessToken->getTokenType());

@@ -68,37 +68,19 @@ class AuthorizationAbstractTest extends TestCase
         ];
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testEmptyErrorException()
     {
-        AuthorizationAbstract::throwErrorException('');
+        $this->expectException(\InvalidArgumentException::class);
+
+        AuthorizationAbstract::throwErrorException([]);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testUnknownErrorException()
     {
+        $this->expectException(\RuntimeException::class);
+
         AuthorizationAbstract::throwErrorException(array(
             'error' => 'foobar',
-        ));
-    }
-
-    /**
-     *
-     * @expectedException \PSX\Oauth2\Authorization\Exception\InvalidRequestException
-     */
-    public function testFacebookErrorException()
-    {
-        AuthorizationAbstract::throwErrorException(array(
-            'error' => array(
-                'message' => 'Message describing the error',
-                'type' => 'OAuthException',
-                'code' => 190,
-                'error_subcode' => 460
-            )
         ));
     }
 }

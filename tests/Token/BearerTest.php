@@ -35,9 +35,7 @@ class BearerTest extends TestCase
 {
     public function testToken()
     {
-        $accessToken = new AccessToken();
-        $accessToken->setTokenType('bearer');
-        $accessToken->setAccessToken('2YotnFZFEjr1zCsicMWpAA');
+        $accessToken = new AccessToken('2YotnFZFEjr1zCsicMWpAA', 'bearer');
 
         $token = TokenAbstract::factory($accessToken);
 

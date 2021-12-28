@@ -29,6 +29,7 @@ use PSX\Http\Client\Client;
 use PSX\Http\Exception\TemporaryRedirectException;
 use PSX\Oauth2\AccessToken;
 use PSX\Oauth2\Authorization\AuthorizationCode;
+use PSX\Oauth2\Authorization\Exception\InvalidRequestException;
 use PSX\Oauth2\Grant;
 use PSX\Uri\Url;
 
@@ -86,12 +87,10 @@ BODY;
         $this->assertEquals('grant_type=authorization_code&code=SplxlOBeZQQYbYS6WxSbIA', (string) $transaction['request']->getBody());
     }
 
-    /**
-     * @expectedException \PSX\Oauth2\Authorization\Exception\InvalidRequestException
-     * @expectedExceptionMessage Error message
-     */
     public function testRequestError()
     {
+        $this->expectException(InvalidRequestException::class);
+
         $body = <<<BODY
 {
   "error":"invalid_request",
@@ -114,7 +113,7 @@ BODY;
         $oauth  = new AuthorizationCode($client, new Url('http://127.0.0.1/api'));
         $oauth->setClientPassword(self::CLIENT_ID, self::CLIENT_SECRET);
 
-        $oauth->getAccessToken('SplxlOBeZQQYbYS6WxSbIA');
+        $oauth->getAccessToken(new Grant\AuthorizationCode('SplxlOBeZQQYbYS6WxSbIA'));
     }
 
     public function testRedirect()
