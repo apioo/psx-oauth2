@@ -23,6 +23,7 @@ namespace PSX\OAuth2\Tests;
 use PHPUnit\Framework\TestCase;
 use PSX\OAuth2\Authorization\Exception;
 use PSX\OAuth2\AuthorizationAbstract;
+use PSX\OAuth2\Exception\MissingParameterException;
 
 /**
  * AuthorizationAbstractTest
@@ -70,7 +71,7 @@ class AuthorizationAbstractTest extends TestCase
 
     public function testEmptyErrorException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(MissingParameterException::class);
 
         AuthorizationAbstract::throwErrorException([]);
     }

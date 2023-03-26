@@ -67,7 +67,7 @@ BODY;
         $stack->push($history);
 
         $client = new Client(['handler' => $stack]);
-        $oauth  = new AuthorizationCode($client, new Url('http://127.0.0.1/api'));
+        $oauth  = new AuthorizationCode($client, Url::parse('http://127.0.0.1/api'));
         $oauth->setClientPassword(self::CLIENT_ID, self::CLIENT_SECRET);
 
         $accessToken = $oauth->getAccessToken(new Grant\AuthorizationCode('SplxlOBeZQQYbYS6WxSbIA'));
@@ -110,7 +110,7 @@ BODY;
         $stack->push($history);
 
         $client = new Client(['handler' => $stack]);
-        $oauth  = new AuthorizationCode($client, new Url('http://127.0.0.1/api'));
+        $oauth  = new AuthorizationCode($client, Url::parse('http://127.0.0.1/api'));
         $oauth->setClientPassword(self::CLIENT_ID, self::CLIENT_SECRET);
 
         $oauth->getAccessToken(new Grant\AuthorizationCode('SplxlOBeZQQYbYS6WxSbIA'));
@@ -119,7 +119,7 @@ BODY;
     public function testRedirect()
     {
         try {
-            AuthorizationCode::redirect(new Url('http://127.0.0.1/api'), self::CLIENT_ID, 'http://127.0.0.1/return', 'foo,bar', 'foo-state');
+            AuthorizationCode::redirect(Url::parse('http://127.0.0.1/api'), self::CLIENT_ID, 'http://127.0.0.1/return', 'foo,bar', 'foo-state');
 
             $this->fail('Must throw an redirect exception');
         } catch (TemporaryRedirectException $e) {

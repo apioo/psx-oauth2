@@ -65,7 +65,7 @@ BODY;
         $stack->push($history);
 
         $client = new Client(['handler' => $stack]);
-        $oauth  = new AuthorizationCode($client, new Url('http://127.0.0.1/api'));
+        $oauth  = new AuthorizationCode($client, Url::parse('http://127.0.0.1/api'));
         $oauth->setClientPassword(self::CLIENT_ID, self::CLIENT_SECRET);
 
         $accessToken = new AccessToken('SplxlOBeZQQYbYS6WxSbIA', 'Bearer', null, 'SplxlOBeZQQYbYS6WxSbIA', 'foo,bar');
