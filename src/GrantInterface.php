@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-namespace PSX\Oauth2;
+namespace PSX\OAuth2;
 
 /**
  * A grant represents a request to obtain a access token

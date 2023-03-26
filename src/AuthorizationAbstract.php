@@ -3,7 +3,7 @@
  * PSX is an open source PHP framework to develop RESTful APIs.
  * For the current version and information visit <https://phpsx.org>
  *
- * Copyright 2010-2022 Christoph Kappestein <christoph.kappestein@gmail.com>
+ * Copyright 2010-2023 Christoph Kappestein <christoph.kappestein@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
  * limitations under the License.
  */
 
-namespace PSX\Oauth2;
+namespace PSX\OAuth2;
 
 use PSX\Http\Client\ClientInterface;
 use PSX\Http\Client\PostRequest;
 use PSX\Json;
-use PSX\Oauth2\Authorization\Exception\ErrorExceptionAbstract;
+use PSX\OAuth2\Exception\ErrorExceptionAbstract;
 use PSX\Uri\Url;
 use RuntimeException;
 
@@ -45,7 +45,6 @@ abstract class AuthorizationAbstract
     protected ?string $clientId = null;
     protected ?string $clientSecret = null;
     protected ?int $type = null;
-    protected ?string $accessTokenClass = null;
 
     public function __construct(ClientInterface $httpClient, Url $url)
     {
@@ -53,23 +52,11 @@ abstract class AuthorizationAbstract
         $this->url        = $url;
     }
 
-    public function setClientPassword(string $clientId, string $clientSecret, int $type = self::AUTH_BASIC)
+    public function setClientPassword(string $clientId, string $clientSecret, int $type = self::AUTH_BASIC): void
     {
         $this->clientId     = $clientId;
         $this->clientSecret = $clientSecret;
         $this->type         = $type;
-    }
-
-    /**
-     * Sets the class which is created when an access token gets returned.
-     * Should be an instance of PSX\Oauth2\AccessToken. This can be used to
-     * handle custom parameters
-     *
-     * @param string $accessTokenClass
-     */
-    public function setAccessTokenClass(string $accessTokenClass)
-    {
-        $this->accessTokenClass = $accessTokenClass;
     }
 
     /**
@@ -110,7 +97,7 @@ abstract class AuthorizationAbstract
         $request  = new PostRequest($this->url, $headers, $data);
         $response = $this->httpClient->request($request);
 
-        $data = Json\Parser::decode($response->getBody(), true);
+        $data = Json\Parser::decode((string) $response->getBody(), true);
 
         if ($response->getStatusCode() == 200) {
             return AccessToken::fromArray($data);
@@ -128,7 +115,7 @@ abstract class AuthorizationAbstract
         $request  = new PostRequest($this->url, $headers, $data);
         $response = $this->httpClient->request($request);
 
-        $data = Json\Parser::decode($response->getBody(), true);
+        $data = Json\Parser::decode((string) $response->getBody(), true);
 
         if ($response->getStatusCode() != 200) {
             self::throwErrorException($data);
@@ -148,31 +135,31 @@ abstract class AuthorizationAbstract
      *
      * @throws ErrorExceptionAbstract
      */
-    public static function throwErrorException(array $data)
+    public static function throwErrorException(array $data): void
     {
         $error = Error::fromArray($data);
 
         switch ($error->getError()) {
             case 'access_denied':
-                throw new Authorization\Exception\AccessDeniedException($error->getErrorDescription());
+                throw new Exception\AccessDeniedException($error->getErrorDescription() ?? '');
             case 'invalid_client':
-                throw new Authorization\Exception\InvalidClientException($error->getErrorDescription());
+                throw new Exception\InvalidClientException($error->getErrorDescription() ?? '');
             case 'invalid_grant':
-                throw new Authorization\Exception\InvalidGrantException($error->getErrorDescription());
+                throw new Exception\InvalidGrantException($error->getErrorDescription() ?? '');
             case 'invalid_request':
-                throw new Authorization\Exception\InvalidRequestException($error->getErrorDescription());
+                throw new Exception\InvalidRequestException($error->getErrorDescription() ?? '');
             case 'invalid_scope':
-                throw new Authorization\Exception\InvalidScopeException($error->getErrorDescription());
+                throw new Exception\InvalidScopeException($error->getErrorDescription() ?? '');
             case 'server_error':
-                throw new Authorization\Exception\ServerErrorException($error->getErrorDescription());
+                throw new Exception\ServerErrorException($error->getErrorDescription() ?? '');
             case 'temporarily_unavailable':
-                throw new Authorization\Exception\TemporarilyUnavailableException($error->getErrorDescription());
+                throw new Exception\TemporarilyUnavailableException($error->getErrorDescription() ?? '');
             case 'unauthorized_client':
-                throw new Authorization\Exception\UnauthorizedClientException($error->getErrorDescription());
+                throw new Exception\UnauthorizedClientException($error->getErrorDescription() ?? '');
             case 'unsupported_grant_type':
-                throw new Authorization\Exception\UnsupportedGrantTypeException($error->getErrorDescription());
+                throw new Exception\UnsupportedGrantTypeException($error->getErrorDescription() ?? '');
             case 'unsupported_response_type':
-                throw new Authorization\Exception\UnsupportedResponseTypeException($error->getErrorDescription());
+                throw new Exception\UnsupportedResponseTypeException($error->getErrorDescription() ?? '');
             default:
                 throw new RuntimeException('Invalid error type');
         }

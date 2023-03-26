@@ -18,9 +18,9 @@
  * limitations under the License.
  */
 
-namespace PSX\Oauth2;
+namespace PSX\OAuth2;
 
-use PSX\Schema\Attribute\Key;
+use PSX\OAuth2\Exception\MissingParameterException;
 
 /**
  * Error
@@ -29,12 +29,10 @@ use PSX\Schema\Attribute\Key;
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    http://phpsx.org
  */
-class Error
+class Error implements \JsonSerializable
 {
     private string $error;
-    #[Key('error_description')]
     private ?string $errorDescription;
-    #[Key('error_uri')]
     private ?string $errorUri;
 
     public function __construct(string $error, ?string $errorDescription = null, ?string $errorUri = null)
@@ -59,10 +57,21 @@ class Error
         return $this->errorUri;
     }
 
+    public function jsonSerialize(): array
+    {
+        return array_filter([
+            'error' => $this->error,
+            'error_description' => $this->errorDescription,
+            'error_uri' => $this->errorUri,
+        ], function($value){
+            return $value !== null;
+        });
+    }
+
     public static function fromArray(array $data): self
     {
         if (!isset($data['error'])) {
-            throw new \InvalidArgumentException('Provided error message does not contain a required "error" key');
+            throw new MissingParameterException('Parameter error is missing');
         }
 
         return new self(

@@ -3,7 +3,7 @@
  * PSX is an open source PHP framework to develop RESTful APIs.
  * For the current version and information visit <https://phpsx.org>
  *
- * Copyright 2010-2022 Christoph Kappestein <christoph.kappestein@gmail.com>
+ * Copyright 2010-2023 Christoph Kappestein <christoph.kappestein@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@
  * limitations under the License.
  */
 
-namespace PSX\Oauth2;
-
-use PSX\Schema\Attribute\Key;
+namespace PSX\OAuth2;
 
 /**
  * AccessToken
@@ -29,15 +27,11 @@ use PSX\Schema\Attribute\Key;
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    https://phpsx.org
  */
-class AccessToken
+class AccessToken implements \JsonSerializable
 {
-    #[Key('access_token')]
     private string $accessToken;
-    #[Key('token_type')]
     private string $tokenType;
-    #[Key('expires_in')]
     private ?int $expiresIn;
-    #[Key('refresh_token')]
     private ?string $refreshToken;
     private ?string $scope;
     private ?string $state;
@@ -80,6 +74,20 @@ class AccessToken
     public function getState(): ?string
     {
         return $this->state;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return array_filter([
+            'access_token' => $this->accessToken,
+            'token_type' => $this->tokenType,
+            'expires_in' => $this->expiresIn,
+            'refresh_token' => $this->refreshToken,
+            'scope' => $this->scope,
+            'state' => $this->state,
+        ], function($value){
+            return $value !== null;
+        });
     }
 
     public static function fromArray(array $data): self

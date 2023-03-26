@@ -3,7 +3,7 @@
  * PSX is an open source PHP framework to develop RESTful APIs.
  * For the current version and information visit <https://phpsx.org>
  *
- * Copyright 2010-2022 Christoph Kappestein <christoph.kappestein@gmail.com>
+ * Copyright 2010-2023 Christoph Kappestein <christoph.kappestein@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-namespace PSX\Oauth2\Tests\Authorization;
+namespace PSX\OAuth2\Tests\Authorization;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -27,10 +27,10 @@ use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use PSX\Http\Client\Client;
 use PSX\Http\Exception\TemporaryRedirectException;
-use PSX\Oauth2\AccessToken;
-use PSX\Oauth2\Authorization\AuthorizationCode;
-use PSX\Oauth2\Authorization\Exception\InvalidRequestException;
-use PSX\Oauth2\Grant;
+use PSX\OAuth2\AccessToken;
+use PSX\OAuth2\Authorization\AuthorizationCode;
+use PSX\OAuth2\Exception\InvalidRequestException;
+use PSX\OAuth2\Grant;
 use PSX\Uri\Url;
 
 /**

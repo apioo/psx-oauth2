@@ -1,6 +1,6 @@
 {
   "name": "psx/oauth2",
-  "description": "Oauth2 consumer",
+  "description": "OAuth2 consumer",
   "keywords": ["oauth2"],
   "homepage": "https://phpsx.org",
   "license": "Apache-2.0",
@@ -13,20 +13,21 @@
   ],
   "require": {
     "php": ">=8.0",
-    "psx/schema": "^4.0"
+    "psx/http": "^4.0",
+    "psx/json": "^3.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^8.0",
+    "phpunit/phpunit": "^9.0",
     "vimeo/psalm": "^4.0"
   },
   "autoload": {
     "psr-4": {
-      "PSX\\Oauth2\\": "src/"
+      "PSX\\OAuth2\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "PSX\\Oauth2\\Tests\\": "tests/"
+      "PSX\\OAuth2\\Tests\\": "tests/"
     }
   }
 }

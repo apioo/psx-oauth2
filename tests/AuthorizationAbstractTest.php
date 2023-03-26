@@ -3,7 +3,7 @@
  * PSX is an open source PHP framework to develop RESTful APIs.
  * For the current version and information visit <https://phpsx.org>
  *
- * Copyright 2010-2022 Christoph Kappestein <christoph.kappestein@gmail.com>
+ * Copyright 2010-2023 Christoph Kappestein <christoph.kappestein@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@
  * limitations under the License.
  */
 
-namespace PSX\Oauth2\Tests;
+namespace PSX\OAuth2\Tests;
 
 use PHPUnit\Framework\TestCase;
-use PSX\Oauth2\Authorization\Exception;
-use PSX\Oauth2\AuthorizationAbstract;
+use PSX\OAuth2\Authorization\Exception;
+use PSX\OAuth2\AuthorizationAbstract;
 
 /**
  * AuthorizationAbstractTest
@@ -46,7 +46,7 @@ class AuthorizationAbstractTest extends TestCase
             ));
 
             $this->fail('Must throw an exception');
-        } catch (Exception\ErrorExceptionAbstract $e) {
+        } catch (\PSX\OAuth2\Exception\ErrorExceptionAbstract $e) {
             $this->assertInstanceOf($class, $e);
             $this->assertEquals($error, $e->getType());
         }
@@ -55,16 +55,16 @@ class AuthorizationAbstractTest extends TestCase
     public function errorProvider()
     {
         return [
-            ['access_denied', Exception\AccessDeniedException::class],
-            ['invalid_client', Exception\InvalidClientException::class],
-            ['invalid_grant', Exception\InvalidGrantException::class],
-            ['invalid_request', Exception\InvalidRequestException::class],
-            ['invalid_scope', Exception\InvalidScopeException::class],
-            ['server_error', Exception\ServerErrorException::class],
-            ['temporarily_unavailable', Exception\TemporarilyUnavailableException::class],
-            ['unauthorized_client', Exception\UnauthorizedClientException::class],
-            ['unsupported_grant_type', Exception\UnsupportedGrantTypeException::class],
-            ['unsupported_response_type', Exception\UnsupportedResponseTypeException::class],
+            ['access_denied', \PSX\OAuth2\Exception\AccessDeniedException::class],
+            ['invalid_client', \PSX\OAuth2\Exception\InvalidClientException::class],
+            ['invalid_grant', \PSX\OAuth2\Exception\InvalidGrantException::class],
+            ['invalid_request', \PSX\OAuth2\Exception\InvalidRequestException::class],
+            ['invalid_scope', \PSX\OAuth2\Exception\InvalidScopeException::class],
+            ['server_error', \PSX\OAuth2\Exception\ServerErrorException::class],
+            ['temporarily_unavailable', \PSX\OAuth2\Exception\TemporarilyUnavailableException::class],
+            ['unauthorized_client', \PSX\OAuth2\Exception\UnauthorizedClientException::class],
+            ['unsupported_grant_type', \PSX\OAuth2\Exception\UnsupportedGrantTypeException::class],
+            ['unsupported_response_type', \PSX\OAuth2\Exception\UnsupportedResponseTypeException::class],
         ];
     }
 

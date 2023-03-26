@@ -18,34 +18,16 @@
  * limitations under the License.
  */
 
-namespace PSX\OAuth2\Tests;
-
-use PHPUnit\Framework\TestCase;
-use PSX\OAuth2\AccessToken;
+namespace PSX\OAuth2\Exception;
 
 /**
- * AccessTokenTest
+ * ErrorExceptionAbstract
  *
  * @author  Christoph Kappestein <christoph.kappestein@gmail.com>
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @link    https://phpsx.org
  */
-class AccessTokenTest extends TestCase
+abstract class ErrorExceptionAbstract extends \Exception
 {
-    public function testToken()
-    {
-        $accessToken = new AccessToken(
-            '2YotnFZFEjr1zCsicMWpAA',
-            'example',
-            3600,
-            '2YotnFZFEjr1zCsicMWpAA',
-            'foo bar'
-        );
-
-        $this->assertEquals('2YotnFZFEjr1zCsicMWpAA', $accessToken->getAccessToken());
-        $this->assertEquals('example', $accessToken->getTokenType());
-        $this->assertEquals(3600, $accessToken->getExpiresIn());
-        $this->assertEquals('2YotnFZFEjr1zCsicMWpAA', $accessToken->getRefreshToken());
-        $this->assertEquals('foo bar', $accessToken->getScope());
-    }
+    abstract public function getType(): string;
 }

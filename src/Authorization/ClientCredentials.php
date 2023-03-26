@@ -3,7 +3,7 @@
  * PSX is an open source PHP framework to develop RESTful APIs.
  * For the current version and information visit <https://phpsx.org>
  *
- * Copyright 2010-2022 Christoph Kappestein <christoph.kappestein@gmail.com>
+ * Copyright 2010-2023 Christoph Kappestein <christoph.kappestein@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
  * limitations under the License.
  */
 
-namespace PSX\Oauth2\Authorization;
+namespace PSX\OAuth2\Authorization;
 
-use PSX\Oauth2\AccessToken;
-use PSX\Oauth2\AuthorizationAbstract;
-use PSX\Oauth2\Grant;
-use PSX\Oauth2\GrantInterface;
+use PSX\OAuth2\AccessToken;
+use PSX\OAuth2\AuthorizationAbstract;
+use PSX\OAuth2\Grant;
+use PSX\OAuth2\GrantInterface;
 
 /**
  * ClientCredentials

@@ -18,7 +18,9 @@
  * limitations under the License.
  */
 
-namespace PSX\Oauth2;
+namespace PSX\OAuth2;
+
+use PSX\OAuth2\Exception\MissingParameterException;
 
 /**
  * The factory create a grant based on the provided parameters
@@ -35,7 +37,7 @@ class GrantFactory
         switch ($grantType) {
             case 'authorization_code':
                 return new Grant\AuthorizationCode(
-                    $parameters['code'] ?? null,
+                    $parameters['code'] ?? throw new MissingParameterException('Parameter code is missing'),
                     $parameters['redirect_uri'] ?? null,
                     $parameters['client_id'] ?? null
                 );
@@ -45,14 +47,14 @@ class GrantFactory
 
             case 'password':
                 return new Grant\Password(
-                    $parameters['username'] ?? null,
-                    $parameters['password'] ?? null,
+                    $parameters['username'] ?? throw new MissingParameterException('Parameter username is missing'),
+                    $parameters['password'] ?? throw new MissingParameterException('Parameter password is missing'),
                     $parameters['scope'] ?? null
                 );
 
             case 'refresh_token':
                 return new Grant\RefreshToken(
-                    $parameters['refresh_token'] ?? null,
+                    $parameters['refresh_token'] ?? throw new MissingParameterException('Parameter refresh_token is missing'),
                     $parameters['scope'] ?? null
                 );
 
