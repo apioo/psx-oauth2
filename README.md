@@ -8,6 +8,8 @@ exceptions to build an OAuth2 server implementation
 
 ## Usage
 
+### Authorization code
+
 ```php
 <?php
 
@@ -15,9 +17,9 @@ exceptions to build an OAuth2 server implementation
 AuthorizationCode::redirect('[auth_url]', '[client_id]', '[redirect_url]');
 
 // if the customer returns you can obtain an access token
-$client = new Http\Client();
-$code = new AuthorizationCode($client, new Url('[token_url]'));
-$code->setClientPassword('[client_id]', '[client_secret]', AuthorizationCode::AUTH_POST);
+$client = new \PSX\Http\Client\Client();
+$code = new \PSX\OAuth2\Authorization\AuthorizationCode($client, new Url('[token_url]'));
+$code->setClientPassword('[client_id]', '[client_secret]');
 
 $accessToken = $code->getAccessToken('[redirect_url]');
 
@@ -27,9 +29,24 @@ $header = [
 ];
 
 $request  = new GetRequest('[api_url]', $header);
-$response = $http->request($request);
+$response = $client->request($request);
 
 if ($response->getStatusCode() == 200) {
     // request worked
 }
+```
+
+### Client credentials
+
+```php
+<?php
+
+$client = new \PSX\Http\Client\Client();
+$code = new \PSX\OAuth2\Authorization\ClientCredentials($client, new Url('[token_url]'));
+$code->setClientPassword('[client_id]', '[client_secret]');
+
+$accessToken = $code->getAccessToken();
+
+// work with the access token
+
 ```
