@@ -42,7 +42,7 @@ abstract class TokenAbstract
 
     public static function factory(AccessToken $accessToken): Bearer
     {
-        switch ($accessToken->getTokenType()) {
+        switch (strtolower($accessToken->getTokenType())) {
             case 'bearer':
             default:
                 return new Bearer($accessToken);
