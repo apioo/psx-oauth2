@@ -35,8 +35,9 @@ class AccessToken implements \JsonSerializable
     private ?string $refreshToken;
     private ?string $scope;
     private ?string $state;
+    private ?string $idToken;
 
-    public function __construct(string $accessToken, string $tokenType, ?int $expiresIn = null, ?string $refreshToken = null, ?string $scope = null, ?string $state = null)
+    public function __construct(string $accessToken, string $tokenType, ?int $expiresIn = null, ?string $refreshToken = null, ?string $scope = null, ?string $state = null, ?string $idToken = null)
     {
         $this->accessToken = $accessToken;
         $this->tokenType = $tokenType;
@@ -44,6 +45,7 @@ class AccessToken implements \JsonSerializable
         $this->refreshToken = $refreshToken;
         $this->scope = $scope;
         $this->state = $state;
+        $this->idToken = $idToken;
     }
 
     public function getAccessToken(): string
@@ -76,6 +78,11 @@ class AccessToken implements \JsonSerializable
         return $this->state;
     }
 
+    public function getIdToken(): ?string
+    {
+        return $this->idToken;
+    }
+
     public function jsonSerialize(): array
     {
         return array_filter([
@@ -85,6 +92,7 @@ class AccessToken implements \JsonSerializable
             'refresh_token' => $this->refreshToken,
             'scope' => $this->scope,
             'state' => $this->state,
+            'id_token' => $this->idToken,
         ], function($value){
             return $value !== null;
         });
@@ -107,6 +115,7 @@ class AccessToken implements \JsonSerializable
             $data['refresh_token'] ?? null,
             $data['scope'] ?? null,
             $data['state'] ?? null,
+            $data['id_token'] ?? null,
         );
     }
 }
