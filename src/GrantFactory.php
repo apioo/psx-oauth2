@@ -39,7 +39,8 @@ class GrantFactory
                 return new Grant\AuthorizationCode(
                     $parameters['code'] ?? throw new MissingParameterException('Parameter code is missing'),
                     $parameters['redirect_uri'] ?? null,
-                    $parameters['client_id'] ?? null
+                    $parameters['client_id'] ?? null,
+                    $parameters['client_secret'] ?? null
                 );
 
             case 'client_credentials':

@@ -35,12 +35,14 @@ class AuthorizationCode implements GrantInterface
     private string $code;
     private ?string $redirectUri;
     private ?string $clientId;
+    private ?string $clientSecret;
 
-    public function __construct(string $code, ?string $redirectUri = null, ?string $clientId = null)
+    public function __construct(string $code, ?string $redirectUri = null, ?string $clientId = null, ?string $clientSecret = null)
     {
         $this->code = $code;
         $this->redirectUri = $redirectUri;
         $this->clientId = $clientId;
+        $this->clientSecret = $clientSecret;
     }
 
     public function getGrantType(): string
@@ -61,6 +63,11 @@ class AuthorizationCode implements GrantInterface
     public function getClientId(): ?string
     {
         return $this->clientId;
+    }
+
+    public function getClientSecret(): ?string
+    {
+        return $this->clientSecret;
     }
 
     public function toArray(): array
